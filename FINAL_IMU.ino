@@ -37,8 +37,8 @@ void turnLeft(float yawAngle) {
 
 void turnRight(float yawAngle) {
   position = 90+k*(180-yawAngle);
-  position = constrain(pos, 55, 125);//test edit angle restraints
-  servo.write(pos);
+  position = constrain(position, 55, 125);//test edit angle restraints
+  servo.write(position);
 }
 
 // Function to read raw gyroscope Z-axis data
@@ -60,7 +60,7 @@ float calibrateGyroZ() {
         sum += readGyroZValue();
         delay(3);
     }
-    return (sum / (float)numSamples) / 131.0; // Convert to dps
+    return (sum / (float)numberSamples) / 131.0; // Convert to dps
 }
 
 //function to return distance between sensor and wall
@@ -81,13 +81,13 @@ float readDistanceFromSensors(int trigPin, int echoPin) {
 
 void recalibratePositon(float yawAngle){
   position = 4*(90-yawAngle);
-  servo.write(pos);
+  servo.write(position);
 }
 
 void recalibrate2Position(float usSensorRight, float usSensorLeft){
   float calibrate = usSensorRight-usSensorLeft;
-  pos = 90-1*(calibrate);
-  servo.write(pos);
+  position = 90-1*(calibrate);
+  servo.write(position);
 }
 
 
@@ -175,13 +175,13 @@ if (!skipUltrasonic) {
         int16_t gyroZ = readGyroZValue();
         float gyroZ_dps = (gyroZ / 131.0) - gyroBiasZaxis; // Subtract bias
 
-        yaw += gyroZ_dps * dt; // Integrate to get yaw
+        yawAngle += gyroZ_dps * dt; // Integrate to get yaw
 
         Serial.print("Yaw Angle: ");
-        Serial.println(yaw);
-        turnRight(yaw);
+        Serial.println(yawAngle);
+        turnRight(yawAngle);
       }
-      yaw=0;
+      yawAngle=0;
     analogWrite(LiftFan, OFF);   // Set lift fan speed (0-255)
     analogWrite(ThrustFan, OFF);
     delay(1000);
@@ -197,20 +197,20 @@ if (!skipUltrasonic) {
       delay(1000);
         analogWrite(LiftFan, MAX);   // Set lift fan speed (0-255)
     analogWrite(ThrustFan, 175);
-      while(abs(yaw) <180){
+      while(abs(yawAngle) <180){
         unsigned long currentTime = millis();
        float dt = (currentTime - prevTime) / 1000.0;
         prevTime = currentTime;
         int16_t gyroZ = readGyroZValue();
         float gyroZ_dps = (gyroZ / 131.0) - gyroBiasZaxis; // Subtract bias
 
-        yaw += gyroZ_dps * dt; // Integrate to get yaw
+        yawAngle += gyroZ_dps * dt; // Integrate to get yaw
 
         Serial.print("Yaw Angle: ");
-        Serial.println(yaw);
-        turnLeft(yaw);
+        Serial.println(yawAngle);
+        turnLeft(yawAngle);
       }
-      yaw=0;
+      yawAngle=0;
         analogWrite(LiftFan, OFF);   // Set lift fan speed (0-255)
     analogWrite(ThrustFan, OFF);
     delay(1000);
