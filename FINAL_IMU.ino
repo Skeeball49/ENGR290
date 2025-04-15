@@ -24,20 +24,20 @@ unsigned long skipStartTime = 0;
 unsigned long prevTime = 0;
 
 //adjustable vairables and functions
-float c = 30; //us bias
+float c = 45; //us bias
 float gyroBiasZaxis = 0.1;//gyroscope bias
 int k=1; //turning speed constant
 
 
 void turnLeft(float yawAngle) {
   position = 90-k*(180-yawAngle);
-  position = constrain(position, 55, 125);//test edit angle restraints
+  position = constrain(position, 60, 60);//test edit angle restraints
   servo.write(position);
 }
 
 void turnRight(float yawAngle) {
   position = 90+k*(180-yawAngle);
-  position = constrain(position, 55, 125);//test edit angle restraints
+  position = constrain(position, 105, 105);//test edit angle restraints
   servo.write(position);
 }
 
@@ -115,7 +115,7 @@ void setup() {
     pinMode(LiftFan, OUTPUT);
     pinMode(ThrustFan, OUTPUT);
     analogWrite(LiftFan, 255);   // Set lift fan speed (0-255)
-    analogWrite(ThrustFan, 255); // Set thrust fan speed (0-255)
+    analogWrite(ThrustFan, 215); // Set thrust fan speed (0-255)
 }
 
 
@@ -131,7 +131,7 @@ float rightDistance = -1;
 if (!skipUltrasonic) {
   leftDistance = readDistanceFromSensors(LeftTrig, LeftEcho);
   rightDistance = readDistanceFromSensors(RightTrig, RightEcho);
-} else if (millis() - skipStartTime >= 5000) {
+} else if (millis() - skipStartTime >= 3000) {
   skipUltrasonic = false; // Resume ultrasonic readings after 5 seconds
 };
 
@@ -156,11 +156,11 @@ if (!skipUltrasonic) {
 
     yawAngle += gyroZ_dps * dt; // Integrate to get yaw
 
-    /*Serial.print("Yaw Angle: ");
-    Serial.println(yaw);
-    Serial.print("Servo angle: ");
-    Serial.println(pos);*/
-    delay(100);
+    // Serial.print("Yaw Angle: ");
+    // Serial.println(yawAngle);
+    // Serial.print("Servo angle: ");
+    // Serial.println(position);
+    // delay(100);
 
    if (rightDistance > leftDistance+c){
     analogWrite(LiftFan, OFF);   // Set lift fan speed (0-255)
@@ -168,7 +168,7 @@ if (!skipUltrasonic) {
     delay(1000);
     analogWrite(LiftFan, MAX);   // Set lift fan speed (0-255)
     analogWrite(ThrustFan, 175);
-      while(abs(yawAngle) <180){
+      while(abs(yawAngle) <170){
         unsigned long currentTime = millis();
     float dt = (currentTime - prevTime) / 1000.0;
     prevTime = currentTime;
@@ -184,9 +184,9 @@ if (!skipUltrasonic) {
       yawAngle=0;
     analogWrite(LiftFan, OFF);   // Set lift fan speed (0-255)
     analogWrite(ThrustFan, OFF);
-    delay(1000);
+    delay(500);
     analogWrite(LiftFan, MAX);   // Set lift fan speed (0-255)
-    analogWrite(ThrustFan, MAX);
+    analogWrite(ThrustFan, 215);
       skipUltrasonic = true;
       skipStartTime = millis();
    }
@@ -213,17 +213,15 @@ if (!skipUltrasonic) {
       yawAngle=0;
         analogWrite(LiftFan, OFF);   // Set lift fan speed (0-255)
     analogWrite(ThrustFan, OFF);
-    delay(1000);
+    delay(500);
     analogWrite(LiftFan, MAX);   // Set lift fan speed (0-255)
-    analogWrite(ThrustFan, MAX);
+    analogWrite(ThrustFan, 215);
       skipUltrasonic = true;
       skipStartTime = millis();
     }
   
-  position = (2*yawAngle)+85;
+  position = (1*yawAngle)+85;
     servo.write(position);
   //recalibrate2Position(rightDistance, leftDistance);
     
 }
-
-
